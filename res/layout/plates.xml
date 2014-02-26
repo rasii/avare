@@ -18,8 +18,8 @@ Redistribution and use in source and binary forms, with or without modification,
         android:background="#FF000000"
         android:id="@+id/plates"
         android:layout_below="@+id/plates_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
 
     <Button
         android:id="@+id/plates_button_center"

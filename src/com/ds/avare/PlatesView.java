@@ -40,7 +40,7 @@ import com.ds.avare.utils.Helper;
  * @author zkhan
  *
  */
-public class PlatesView extends View implements MultiTouchObjectCanvas<Object>, OnTouchListener {
+public class PlatesView extends TouchImageView {
 	
 
     private Scale                        mScale;
@@ -74,10 +74,10 @@ public class PlatesView extends View implements MultiTouchObjectCanvas<Object>, 
         mPref = new Preferences(context);
         mTextDiv = mPref.getOrientation().contains("Portrait") ? 24.f : 12.f;
         mScale = new Scale();
-        setOnTouchListener(this);
-        mMultiTouchC = new MultiTouchController<Object>(this);
+        //setOnTouchListener(this);
+        //mMultiTouchC = new MultiTouchController<Object>(this);
         mCurrTouchPoint = new PointInfo();
-        mGestureDetector = new GestureDetector(context, new GestureListener());
+//        mGestureDetector = new GestureDetector(context, new GestureListener());
         setBackgroundColor(Color.BLACK);
         mAirplaneBitmap = new BitmapHolder(context, mPref.isHelicopter() ? R.drawable.heli : R.drawable.plane);
 	/*
@@ -138,65 +138,66 @@ public class PlatesView extends View implements MultiTouchObjectCanvas<Object>, 
     }
 
     
-    /* (non-Javadoc)
-     * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
-     */
-    @Override
-    public boolean onTouch(View view, MotionEvent e) {
-        mGestureDetector.onTouchEvent(e);
-        return mMultiTouchC.onTouchEvent(e);
-    }
+//    /* (non-Javadoc)
+//     * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
+//     */
+//    @Override
+//    public boolean onTouch(View view, MotionEvent e) {
+//        mGestureDetector.onTouchEvent(e);
+//        return mMultiTouchC.onTouchEvent(e);
+//    }
 
     /**
      * @param name
      */
     public void setBitmap(BitmapHolder holder) {
         mBitmap = holder;
+        super.setImageBitmap(holder.getBitmap());
         postInvalidate();
     }
 
-    /* (non-Javadoc)
-     * @see com.ds.avare.MultiTouchController.MultiTouchObjectCanvas#getDraggableObjectAtPoint(com.ds.avare.MultiTouchController.PointInfo)
-     */
-    public Object getDraggableObjectAtPoint(PointInfo pt) {
-        return mBitmap;
-    }
-
-    /* (non-Javadoc)
-     * @see com.ds.avare.MultiTouchController.MultiTouchObjectCanvas#getPositionAndScale(java.lang.Object, com.ds.avare.MultiTouchController.PositionAndScale)
-     */
-    public void getPositionAndScale(Object obj, PositionAndScale objPosAndScaleOut) {
-        objPosAndScaleOut.set(mPan.getMoveX(), mPan.getMoveY(), true,
-                mScale.getScaleFactor(), false, 0, 0, false, 0);
-    }
-
-    /* (non-Javadoc)
-     * @see com.ds.avare.MultiTouchController.MultiTouchObjectCanvas#selectObject(java.lang.Object, com.ds.avare.MultiTouchController.PointInfo)
-     */
-    public void selectObject(Object obj, PointInfo touchPoint) {
-        touchPointChanged(touchPoint);
-    }
-
-    /* (non-Javadoc)
-     * @see com.ds.avare.MultiTouchController.MultiTouchObjectCanvas#setPositionAndScale(java.lang.Object, com.ds.avare.MultiTouchController.PositionAndScale, com.ds.avare.MultiTouchController.PointInfo)
-     */
-    public boolean setPositionAndScale(Object obj,PositionAndScale newObjPosAndScale, PointInfo touchPoint) {
-        touchPointChanged(touchPoint);
-        if(false == mCurrTouchPoint.isMultiTouch()) {
-            /*
-             * Multi-touch is zoom, single touch is pan
-             */
-            mPan.setMove(newObjPosAndScale.getXOff(), newObjPosAndScale.getYOff());
-        }
-        else {
-            /*
-             * Clamp scaling.
-             */
-            mScale.setScaleFactor(newObjPosAndScale.getScale());
-        }
-        invalidate();
-        return true;
-    }
+//    /* (non-Javadoc)
+//     * @see com.ds.avare.MultiTouchController.MultiTouchObjectCanvas#getDraggableObjectAtPoint(com.ds.avare.MultiTouchController.PointInfo)
+//     */
+//    public Object getDraggableObjectAtPoint(PointInfo pt) {
+//        return mBitmap;
+//    }
+//
+//    /* (non-Javadoc)
+//     * @see com.ds.avare.MultiTouchController.MultiTouchObjectCanvas#getPositionAndScale(java.lang.Object, com.ds.avare.MultiTouchController.PositionAndScale)
+//     */
+//    public void getPositionAndScale(Object obj, PositionAndScale objPosAndScaleOut) {
+//        objPosAndScaleOut.set(mPan.getMoveX(), mPan.getMoveY(), true,
+//                mScale.getScaleFactor(), false, 0, 0, false, 0);
+//    }
+//
+//    /* (non-Javadoc)
+//     * @see com.ds.avare.MultiTouchController.MultiTouchObjectCanvas#selectObject(java.lang.Object, com.ds.avare.MultiTouchController.PointInfo)
+//     */
+//    public void selectObject(Object obj, PointInfo touchPoint) {
+//        touchPointChanged(touchPoint);
+//    }
+//
+//    /* (non-Javadoc)
+//     * @see com.ds.avare.MultiTouchController.MultiTouchObjectCanvas#setPositionAndScale(java.lang.Object, com.ds.avare.MultiTouchController.PositionAndScale, com.ds.avare.MultiTouchController.PointInfo)
+//     */
+//    public boolean setPositionAndScale(Object obj,PositionAndScale newObjPosAndScale, PointInfo touchPoint) {
+//        touchPointChanged(touchPoint);
+//        if(false == mCurrTouchPoint.isMultiTouch()) {
+//            /*
+//             * Multi-touch is zoom, single touch is pan
+//             */
+//            mPan.setMove(newObjPosAndScale.getXOff(), newObjPosAndScale.getYOff());
+//        }
+//        else {
+//            /*
+//             * Clamp scaling.
+//             */
+//            mScale.setScaleFactor(newObjPosAndScale.getScale());
+//        }
+//        invalidate();
+//        return true;
+//    }
 
     /**
      * Set params to show lon/lat 
@@ -206,125 +207,125 @@ public class PlatesView extends View implements MultiTouchObjectCanvas<Object>, 
     	mShowingAD = ad;
     	postInvalidate();
     }
-    
-    /**
-     * @param touchPoint
-     */
-    private void touchPointChanged(PointInfo touchPoint) {
-        mCurrTouchPoint.set(touchPoint);
-        invalidate();
-    }
-
-    /* (non-Javadoc)
-     * @see android.view.View#onDraw(android.graphics.Canvas)
-     */
-    @Override
-    public void onDraw(Canvas canvas) {
-    	if(mBitmap == null) {
-    		return;
-    	}
-    	if(mBitmap.getBitmap() == null) {
-    		return;
-    	}
-    	
-        float min = Math.min(getWidth(), getHeight()) - 8;
-        mPaint.setTextSize(min / 20);
-        mPaint.setShadowLayer(0, 0, 0, Color.BLACK);
-        
-        float scale = mScale.getScaleFactor();
-        
-    	/*
-    	 * Plate
-    	 */
-    	mBitmap.getTransform().setScale(scale, scale);
-    	mBitmap.getTransform().postTranslate(
-    			mPan.getMoveX() * scale,
-    			mPan.getMoveY() * scale);
-        
-    	if(mPref.isNightMode()) {
-            Helper.invertCanvasColors(mPaint);
-        }
-    	canvas.drawBitmap(mBitmap.getBitmap(), mBitmap.getTransform(), mPaint);
-        Helper.restoreCanvasColors(mPaint);
-        
-    	mPaint.setStrokeWidth(4 * mDipToPix);
-    	
-    	
-        if(mErrorStatus != null) {
-            mPaint.setTextAlign(Align.RIGHT);
-
-            mPaint.setColor(Color.RED);
-            canvas.drawText(mErrorStatus,
-                    getWidth(), getHeight() / mTextDiv, mPaint);
-        }
-        else {
-            
-            if(null == mGpsParams || null == mMatrix) {
-                return;
-            }
-            
-            /*
-             * Calculate offsets of our location
-             */
-            
-            float lon = (float)mGpsParams.getLongitude();
-            float lat = (float)mGpsParams.getLatitude();
-            float pixx = 0;
-            float pixy = 0;
-            float angle = 0;
-            
-            if(mShowingAD) {
-                /*
-                 * Mike's matrix
-                 */
-                float wftA = mMatrix[6];
-                float wftB = mMatrix[7];
-                float wftC = mMatrix[8];
-                float wftD = mMatrix[9];
-                float wftE = mMatrix[10];
-                float wftF = mMatrix[11];
-                
-                pixx = (wftA * lon + wftC * lat + wftE) / 2.f;
-                pixy = (wftB * lon + wftD * lat + wftF) / 2.f;
-                
-                /*
-                 * Now find angle.
-                 * Add 0.1 to lat that gives us north
-                 * Y increase down so give -180
-                 */
-                float pixxn = (wftA * lon + wftC * (lat + 0.1f) + wftE) / 2.f;
-                float pixyn = (wftB * lon + wftD * (lat + 0.1f) + wftF) / 2.f;
-                float diffx = pixxn - pixx;
-                float diffy = pixyn - pixy;
-                angle = (float)Math.toDegrees(Math.atan2(diffx, -diffy));
-            }
-            else {
-                /*
-                 * Faisal's database
-                 */
-                pixx = (lon - mMatrix[0]) * mMatrix[1] / 2.f;
-                pixy = (lat - mMatrix[2]) * mMatrix[3] / 2.f;
-                angle = -mMatrix[4];
-            }
-            
-            /*
-             * Draw airplane at that location
-             */
-            mAirplaneBitmap.getTransform().setRotate((float)mGpsParams.getBearing() + angle,
-                    mAirplaneBitmap.getWidth() / 2.f,
-                    mAirplaneBitmap.getHeight() / 2.f);
-            
-            mAirplaneBitmap.getTransform().postTranslate(
-                    pixx * scale
-                    - mAirplaneBitmap.getWidth()  / 2.f
-                    + mPan.getMoveX() * scale,
-                    pixy * scale
-                    - mAirplaneBitmap.getHeight()  / 2.f
-                    + mPan.getMoveY() * scale);
-            canvas.drawBitmap(mAirplaneBitmap.getBitmap(), mAirplaneBitmap.getTransform(), mPaint);
-        }
-    }
-    
+//    
+//    /**
+//     * @param touchPoint
+//     */
+//    private void touchPointChanged(PointInfo touchPoint) {
+//        mCurrTouchPoint.set(touchPoint);
+//        invalidate();
+//    }
+//
+//    /* (non-Javadoc)
+//     * @see android.view.View#onDraw(android.graphics.Canvas)
+//     */
+//    @Override
+//    public void onDraw(Canvas canvas) {
+//    	if(mBitmap == null) {
+//    		return;
+//    	}
+//    	if(mBitmap.getBitmap() == null) {
+//    		return;
+//    	}
+//    	
+//        float min = Math.min(getWidth(), getHeight()) - 8;
+//        mPaint.setTextSize(min / 20);
+//        mPaint.setShadowLayer(0, 0, 0, Color.BLACK);
+//        
+//        float scale = mScale.getScaleFactor();
+//        
+//    	/*
+//    	 * Plate
+//    	 */
+//    	mBitmap.getTransform().setScale(scale, scale);
+//    	mBitmap.getTransform().postTranslate(
+//    			mPan.getMoveX() * scale,
+//    			mPan.getMoveY() * scale);
+//        
+//    	if(mPref.isNightMode()) {
+//            Helper.invertCanvasColors(mPaint);
+//        }
+//    	canvas.drawBitmap(mBitmap.getBitmap(), mBitmap.getTransform(), mPaint);
+//        Helper.restoreCanvasColors(mPaint);
+//        
+//    	mPaint.setStrokeWidth(4 * mDipToPix);
+//    	
+//    	
+//        if(mErrorStatus != null) {
+//            mPaint.setTextAlign(Align.RIGHT);
+//
+//            mPaint.setColor(Color.RED);
+//            canvas.drawText(mErrorStatus,
+//                    getWidth(), getHeight() / mTextDiv, mPaint);
+//        }
+//        else {
+//            
+//            if(null == mGpsParams || null == mMatrix) {
+//                return;
+//            }
+//            
+//            /*
+//             * Calculate offsets of our location
+//             */
+//            
+//            float lon = (float)mGpsParams.getLongitude();
+//            float lat = (float)mGpsParams.getLatitude();
+//            float pixx = 0;
+//            float pixy = 0;
+//            float angle = 0;
+//            
+//            if(mShowingAD) {
+//                /*
+//                 * Mike's matrix
+//                 */
+//                float wftA = mMatrix[6];
+//                float wftB = mMatrix[7];
+//                float wftC = mMatrix[8];
+//                float wftD = mMatrix[9];
+//                float wftE = mMatrix[10];
+//                float wftF = mMatrix[11];
+//                
+//                pixx = (wftA * lon + wftC * lat + wftE) / 2.f;
+//                pixy = (wftB * lon + wftD * lat + wftF) / 2.f;
+//                
+//                /*
+//                 * Now find angle.
+//                 * Add 0.1 to lat that gives us north
+//                 * Y increase down so give -180
+//                 */
+//                float pixxn = (wftA * lon + wftC * (lat + 0.1f) + wftE) / 2.f;
+//                float pixyn = (wftB * lon + wftD * (lat + 0.1f) + wftF) / 2.f;
+//                float diffx = pixxn - pixx;
+//                float diffy = pixyn - pixy;
+//                angle = (float)Math.toDegrees(Math.atan2(diffx, -diffy));
+//            }
+//            else {
+//                /*
+//                 * Faisal's database
+//                 */
+//                pixx = (lon - mMatrix[0]) * mMatrix[1] / 2.f;
+//                pixy = (lat - mMatrix[2]) * mMatrix[3] / 2.f;
+//                angle = -mMatrix[4];
+//            }
+//            
+//            /*
+//             * Draw airplane at that location
+//             */
+//            mAirplaneBitmap.getTransform().setRotate((float)mGpsParams.getBearing() + angle,
+//                    mAirplaneBitmap.getWidth() / 2.f,
+//                    mAirplaneBitmap.getHeight() / 2.f);
+//            
+//            mAirplaneBitmap.getTransform().postTranslate(
+//                    pixx * scale
+//                    - mAirplaneBitmap.getWidth()  / 2.f
+//                    + mPan.getMoveX() * scale,
+//                    pixy * scale
+//                    - mAirplaneBitmap.getHeight()  / 2.f
+//                    + mPan.getMoveY() * scale);
+//            canvas.drawBitmap(mAirplaneBitmap.getBitmap(), mAirplaneBitmap.getTransform(), mPaint);
+//        }
+//    }
+//    
     /**
      * Center to the location
      */
@@ -336,19 +337,19 @@ public class PlatesView extends View implements MultiTouchObjectCanvas<Object>, 
         mPan = new Pan();
         postInvalidate();
     }
-
-    /**
-     * @author zkhan
-     *
-     */
-    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        /* (non-Javadoc)
-         * @see android.view.GestureDetector.SimpleOnGestureListener#onLongPress(android.view.MotionEvent)
-         */
-        @Override
-        public void onLongPress(MotionEvent e) {
-        	
-        }
-    }
+//
+//    /**
+//     * @author zkhan
+//     *
+//     */
+//    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+//
+//        /* (non-Javadoc)
+//         * @see android.view.GestureDetector.SimpleOnGestureListener#onLongPress(android.view.MotionEvent)
+//         */
+//        @Override
+//        public void onLongPress(MotionEvent e) {
+//        	
+//        }
+//    }
 }

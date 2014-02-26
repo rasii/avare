@@ -118,7 +118,7 @@ public class DataSource {
      * @param lat
      * @return
      */
-    public String findClosestAirportID(double lon, double lat) {
+    public DataBaseHelper.ClosestAirportData findClosestAirportID(double lon, double lat) {
         return(dbHelper.findClosestAirportID(lon, lat));
     }
     

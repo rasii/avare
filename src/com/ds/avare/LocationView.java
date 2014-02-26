@@ -32,6 +32,7 @@ import com.ds.avare.shapes.DistanceRings;
 import com.ds.avare.shapes.MetShape;
 import com.ds.avare.shapes.TFRShape;
 import com.ds.avare.shapes.Tile;
+import com.ds.avare.storage.DataBaseHelper;
 import com.ds.avare.storage.DataSource;
 import com.ds.avare.storage.Preferences;
 import com.ds.avare.touch.GestureInterface;
@@ -51,6 +52,7 @@ import com.ds.avare.weather.Taf;
 import com.ds.avare.weather.WindsAloft;
 import com.ds.avare.R;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -60,11 +62,13 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -1599,7 +1603,20 @@ public class LocationView extends View implements MultiTouchObjectCanvas<Object>
             lat = (Double)vals[1];
             text = (String)vals[2];
             textMets = (String)vals[3];
-            airport = mService.getDBResource().findClosestAirportID(lon, lat);
+            String destination = (String)vals[4];
+            DataBaseHelper.ClosestAirportData airportData = mService.getDBResource().findClosestAirportID(lon, lat);
+
+            // Give a little more leash if the airport we found is the destination
+            if(null != airportData) {
+                Log.i("ras", "airport = " + airportData.airport + " dist = " + airportData.distance);
+                if(null != destination && destination == airportData.airport && airportData.distance < 0.001) {
+                    airport = airportData.airport;
+                }
+                else if(airportData.distance < 0.001) {
+                    airport = airportData.airport;
+                }
+            }
+
             if(null == airport) {
                 airport = "" + Helper.truncGeo(lat) + "&" + Helper.truncGeo(lon);
 
@@ -1907,8 +1924,37 @@ public class LocationView extends View implements MultiTouchObjectCanvas<Object>
             if(null != mClosestTask) {
                 mClosestTask.cancel(true);
             }
+            
+            float pixPerNm = 0;
+            if(null != mMovement && null != mScale) {
+                pixPerNm = mMovement.getNMPerLatitude(mScale);
+            }
+            
+            String destination = null;
+            if(mService != null && pixPerNm > 0) {
+                Destination dest = mService.getDestination();
+                if(dest != null) {
+                    destination = dest.getID();
+                    
+                    Location destLoc = dest.getLocation();
+                    Projection proj = new Projection(destLoc.getLongitude(), destLoc.getLatitude(), lon2, lat2);
+                    
+                    
+                    double fudgeFactor = Math.pow(Math.cos(Math.toRadians(lat2)),2);
+                    double dist = (lon2-destLoc.getLongitude()) * (lon2-destLoc.getLongitude()) * fudgeFactor +
+                            (lat2-destLoc.getLatitude()) * (lat2-destLoc.getLatitude());
+
+
+                    String message = String.format("dist=%.6f, distNm=%.2f, pixPerNm=%6.2f, pixels=%6.2f", dist*1000.0, proj.getDistance(), pixPerNm, proj.getDistance() * pixPerNm);
+                    Log.i("ras", message);
+                    new AlertDialog.Builder(mContext).setTitle("ras").setMessage(message).show();
+                }
+            }
+
+            
+            
             mClosestTask = new ClosestAirportTask();
-            mClosestTask.execute(lon2, lat2, text, textMets);
+            mClosestTask.execute(lon2, lat2, text, textMets, destination);
         }
     }
 

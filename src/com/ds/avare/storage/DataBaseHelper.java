@@ -1363,6 +1363,20 @@ public class DataBaseHelper  {
     }
     
     /**
+     * Class to return airport and distance
+     * @author rstigall
+     *
+     */
+    public class ClosestAirportData {
+        public final String airport;
+        public final double distance;
+        
+        public ClosestAirportData(String airport, double distance) {
+            this.airport = airport;
+            this.distance = distance;
+        }
+    }    
+    /**
      * Find the closets tiles to current position
      * @param lon
      * @param lat
@@ -1371,7 +1385,7 @@ public class DataBaseHelper  {
      * @param names
      * @return
      */
-    public String findClosestAirportID(double lon, double lat) {
+    public ClosestAirportData findClosestAirportID(double lon, double lat) {
 
         /*
          * Find with sqlite query
@@ -1382,6 +1396,7 @@ public class DataBaseHelper  {
                 + ") as dist";
         String qry = "select " + LOCATION_ID_DB + asDist + " from " + TABLE_AIRPORTS;
         if(!mPref.shouldShowAllFacilities()) {
+<<<<<<< HEAD
             qry +=  " where " + TYPE_DB + "=='AIRPORT' and ";
         }
         else {
@@ -1389,15 +1404,23 @@ public class DataBaseHelper  {
         }
 
         qry += "dist < 0.001 order by dist limit 1;";
+=======
+            qry +=  " where " + TYPE_DB + "=='AIRPORT'";
+        }
+        else {
+            qry += " where";
+        }
+
+        qry += " order by dist limit 1;";
+>>>>>>> PlatesView changes with TouchImageView (not complete)
         
         Cursor cursor = doQuery(qry, getMainDb());
-        String ret = null;
-
+        ClosestAirportData ret = null;
         try {
             if(cursor != null) {
                 if(cursor.moveToFirst()) {
                     
-                    ret = new String(cursor.getString(0));
+                    ret = new ClosestAirportData(cursor.getString(0), cursor.getDouble(1));
                 }
             }
         }
