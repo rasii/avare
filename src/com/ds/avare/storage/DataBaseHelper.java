@@ -1396,7 +1396,6 @@ public class DataBaseHelper  {
                 + ") as dist";
         String qry = "select " + LOCATION_ID_DB + asDist + " from " + TABLE_AIRPORTS;
         if(!mPref.shouldShowAllFacilities()) {
-<<<<<<< HEAD
             qry +=  " where " + TYPE_DB + "=='AIRPORT' and ";
         }
         else {
@@ -1404,15 +1403,6 @@ public class DataBaseHelper  {
         }
 
         qry += "dist < 0.001 order by dist limit 1;";
-=======
-            qry +=  " where " + TYPE_DB + "=='AIRPORT'";
-        }
-        else {
-            qry += " where";
-        }
-
-        qry += " order by dist limit 1;";
->>>>>>> PlatesView changes with TouchImageView (not complete)
         
         Cursor cursor = doQuery(qry, getMainDb());
         ClosestAirportData ret = null;
